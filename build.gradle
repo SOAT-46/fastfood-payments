@@ -1,0 +1,289 @@
+import com.github.spotbugs.snom.Confidence
+import com.github.spotbugs.snom.Effort
+import com.kageiit.jacobo.JacoboTask
+
+plugins {
+    id 'pmd'
+    id 'java'
+    id 'idea'
+    id 'checkstyle'
+    id 'project-report'
+
+    id 'org.springframework.boot' version '3.4.2'
+    id 'io.spring.dependency-management' version '1.1.7'
+
+    id 'jacoco'
+    id 'com.kageiit.jacobo' version '2.1.0'
+    id 'org.barfuin.gradle.jacocolog' version '3.1.0'
+    id "com.github.ben-manes.versions" version '0.52.0'
+
+    id 'com.diffplug.spotless' version '7.0.2'
+    id 'org.sonarqube' version '6.0.1.5171'
+
+    id 'com.github.spotbugs' version '6.0.20'
+    id 'org.owasp.dependencycheck' version '12.0.2'
+    id 'org.cyclonedx.bom' version '2.0.0'
+
+    id 'org.springdoc.openapi-gradle-plugin' version '1.9.0'
+    id 'com.github.johnrengelman.processes' version '0.5.0'
+}
+
+group = 'com.github.soat46.fastfood'
+version = '1.0.0'
+description = 'Fastfood Payments'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    all {
+        exclude group: 'com.google.collections', module: 'google-collections'
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://maven.google.com/' } // Add Google's Maven repository
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.boot:spring-boot-dependencies:3.4.2"
+    }
+}
+
+ext {
+    springBootVersion = '3.4.2'
+    lombokVersion = '1.18.34'
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+
+    implementation 'org.hibernate.orm:hibernate-core'
+    implementation 'org.liquibase:liquibase-core'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok:1.18.34'
+    annotationProcessor 'org.projectlombok:lombok:1.18.34'
+    testCompileOnly 'org.projectlombok:lombok:1.18.34'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
+
+    // MapStruct
+    implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
+    implementation 'com.google.zxing:core:3.5.3'
+    implementation 'com.google.zxing:javase:3.5.3'
+
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    implementation 'org.apache.httpcomponents.core5:httpcore5'
+    implementation 'org.apache.httpcomponents.client5:httpclient5'
+    implementation 'org.apache.httpcomponents.client5:httpclient5-cache'
+    implementation 'com.mercadopago:sdk-java:2.1.29'
+    compileOnly 'com.google.guava:guava:32.0.1-jre'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    pmd 'net.sourceforge.pmd:pmd-ant:7.4.0'
+    pmd 'net.sourceforge.pmd:pmd-java:7.4.0'
+    spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.13.0'
+
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    configure(options) {
+        options.compilerArgs << '-parameters'
+    }
+}
+
+def appResourceDir = "${projectDir}/src/main/resources/app"
+def jacocoVersion = '0.8.12'
+def googleJavaFormatVersion = '1.25.2'
+def checkstyleVersion = '10.21.2'
+def pmdVersion = '7.10.0'
+def spotbugsVersion = '4.8.3'
+
+def jacocoXmlReportPath = "${buildDir}/reports/jacoco/test"
+
+test {
+    useJUnitPlatform()
+    systemProperty 'junit.jupiter.execution.parallel.enabled', true
+    systemProperty 'junit.jupiter.execution.parallel.mode.default', 'same_thread'
+    systemProperty 'junit.jupiter.execution.parallel.mode.classes.default', 'concurrent'
+    systemProperty 'junit.jupiter.execution.parallel.config.strategy', 'dynamic'
+
+    testLogging {
+        events 'skipped', 'failed'
+        exceptionFormat 'full'
+    }
+    finalizedBy jacocoTestReport
+}
+
+jacoco {
+    toolVersion = jacocoVersion
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+        csv.required = false
+        html.required = true
+    }
+    finalizedBy jacocoTestCoverageVerification
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        failOnViolation = false
+        rule {
+            element = 'BUNDLE'
+
+            limit {
+                counter = 'CLASS'
+                value = 'MISSEDCOUNT'
+                maximum = 19
+            }
+
+            limit {
+                counter = 'METHOD'
+                value = 'COVEREDRATIO'
+                minimum = 0.87
+            }
+
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.60
+            }
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.85
+            }
+
+            limit {
+                counter = 'INSTRUCTION'
+                value = 'COVEREDRATIO'
+                minimum = 0.85
+            }
+
+            limit {
+                counter = 'COMPLEXITY'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+        }
+    }
+}
+
+tasks.register('jacobo', JacoboTask) {
+    jacocoReport = file("${jacocoXmlReportPath}/jacocoTestReport.xml")
+    coberturaReport = file("${buildDir}/reports/cobertura.xml")
+    srcDirs = sourceSets.main.java.srcDirs
+}
+
+spotless {
+    encoding 'UTF-8'
+    enforceCheck false
+
+    format 'misc', {
+        target '*.md', '.gitignore'
+        trimTrailingWhitespace()
+        indentWithTabs()
+        endWithNewline()
+    }
+    java {
+        googleJavaFormat(googleJavaFormatVersion)
+    }
+    groovyGradle {
+        target '*.gradle'
+        greclipse()
+    }
+}
+
+checkstyle {
+    toolVersion = checkstyleVersion
+    ignoreFailures = false
+    showViolations = true
+    maxWarnings = 0
+    configFile = file("${appResourceDir}/quality/checkstyle-google-ruleset.xml")
+}
+
+tasks.register('checkstyle') {
+    dependsOn 'checkstyleMain'
+    dependsOn 'checkstyleTest'
+}
+
+pmd {
+    consoleOutput = true
+    toolVersion = pmdVersion
+    ruleSets = [
+        "${appResourceDir}/quality/pmd-custom-ruleset.xml"
+    ]
+}
+
+tasks.register('pmd') {
+    dependsOn 'pmdMain'
+    dependsOn 'pmdTest'
+}
+
+spotbugs {
+    toolVersion = spotbugsVersion
+    effort = Effort.valueOf('MAX')
+    reportLevel = Confidence.valueOf('LOW')
+    ignoreFailures = false
+    showStackTraces = true
+    showProgress = true
+
+    excludeFilter = file("${projectDir}/src/main/resources/app/quality/spotbugs/spotbugs-exclude.xml")
+}
+
+spotbugsMain {
+    reports {
+        xml {
+            required = true
+            outputLocation = file("${buildDir}/reports/spotbugs/main.xml")
+        }
+        html {
+            required = true
+            outputLocation = file("${buildDir}/reports/spotbugs/main.html")
+            stylesheet = 'fancy-hist.xsl'
+        }
+    }
+}
+
+spotbugsTest {
+    reports {
+        xml.required = true
+    }
+}
+
+tasks.register('spotbugsAll') {
+    group = 'verification'
+    description = 'Run SpotBugs analysis on both main and test source sets'
+    dependsOn 'spotbugsMain', 'spotbugsTest'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+
+    withJavadocJar()
+    withSourcesJar()
+}
+
+jar {
+    manifest {
+        attributes(
+            'Implementation-Title': project.name,
+            'Implementation-Version': project.version
+        )
+    }
+}

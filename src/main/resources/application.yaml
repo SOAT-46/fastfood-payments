@@ -1,0 +1,14 @@
+spring:
+    application:
+        name: microservice_mercadopago
+    data:
+      mongodb:
+          uri: ${SPRING_DATA_MONGODB_URI:mongodb://root:password@localhost:27017/fastfood?authSource=admin}
+
+integration:
+  mercadopago:
+    url: https://api.mercadopago.com
+    path: instore/orders/qr/seller/collectors/1921779299/pos/CAIXA1/qrs
+    accesstoken: APP_USR-1055805105065884-091519-34686052ccba4948bbfdef0ced14bd2a-1921779299
+    orderDataUrl: https://api.mercadopago.com/v1/payments
+    notificationUrl: https://a8hdxbwg74.execute-api.us-east-1.amazonaws.com/hom/payment

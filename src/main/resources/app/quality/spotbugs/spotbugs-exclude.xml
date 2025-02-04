@@ -1,0 +1,11 @@
+<FindBugsFilter>
+    <Match>
+        <Class name="~.*makeConcatWithConstants.*"/>
+    </Match>
+    <Match>
+        <Class name="~.*accept.*"/>
+    </Match>
+    <Match>
+        <Class name="~.*get.*"/>
+    </Match>
+</FindBugsFilter>
