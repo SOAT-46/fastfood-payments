@@ -1,8 +1,11 @@
 package com.github.soat46.fastfood.payments.controller;
 
+import com.github.soat46.fastfood.payments.controller.dto.WebhookDto;
 import com.github.soat46.fastfood.payments.core.entities.payment.FastfoodPayment;
 import com.github.soat46.fastfood.payments.core.entities.payment.PaymentNotification;
 import com.github.soat46.fastfood.payments.core.usecase.interfaces.CreatePaymentUseCase;
+import com.mercadopago.exceptions.MPApiException;
+import com.mercadopago.exceptions.MPException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,14 +37,8 @@ public class CreatePaymentController {
     }
 
     @PostMapping
-    public ResponseEntity<String> webhook(@RequestBody WebhookDto webhookVo) {
-        try {
-            this.useCase.webhookHandle(webhookVo);
-        } catch (MPException e) {
-            throw new MPException(e);
-        } catch (MPApiException e) {
-            throw new MPApiException(e);
-        }
+    public ResponseEntity<String> webhook(@RequestBody WebhookDto webhookVo) throws MPException, MPApiException{
+        this.useCase.webhook(webhookVo);
 
         return ResponseEntity.ok("Received webhook");
     }

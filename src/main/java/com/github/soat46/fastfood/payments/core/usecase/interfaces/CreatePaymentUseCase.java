@@ -11,6 +11,6 @@ import java.util.Optional;
 public interface CreatePaymentUseCase {
 
     Optional<FastfoodPayment> create(PaymentNotification input);
-    boolean webhookHandle(WebhookDto webhookDto) throws MPException, MPApiException;
+    boolean webhook(WebhookDto webhookDto) throws MPException, MPApiException;
 
 }

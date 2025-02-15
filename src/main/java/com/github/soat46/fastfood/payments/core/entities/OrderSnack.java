@@ -57,7 +57,7 @@ public class OrderSnack {
           case "expired" -> PaymentProgress.EXPIRED;
           default ->
               throw new UnsupportedOperationException(
-                  "Payment status"
+                  "MongoPayment status"
                       + oldStatus
                       + " not supported, choose between: closed, opened or expired");
         };

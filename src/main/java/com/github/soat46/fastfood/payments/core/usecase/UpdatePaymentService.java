@@ -34,10 +34,10 @@ public class UpdatePaymentService implements UpdatePaymentUseCase {
           order -> {
             order.updatePaymentStatus(orderData.get());
             order.updateStatus();
-            log.info("Payment status updated to: {}", order.getPaymentProgress());
+            log.info("MongoPayment status updated to: {}", order.getPaymentProgress());
 
             orderPort.update(order);
-            log.info("Payment status updated successfully");
+            log.info("MongoPayment status updated successfully");
           });
     } catch (Exception e) {
       log.error("Error updating payment status: {}", e.getMessage());

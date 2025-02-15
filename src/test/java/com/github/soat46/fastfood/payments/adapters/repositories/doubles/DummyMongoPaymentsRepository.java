@@ -1,7 +1,7 @@
 package com.github.soat46.fastfood.payments.adapters.repositories.doubles;
 
 import com.github.soat46.fastfood.payments.adapters.repositories.contracts.PaymentsRepository;
-import com.github.soat46.fastfood.payments.adapters.repositories.models.Payment;
+import com.github.soat46.fastfood.payments.adapters.repositories.models.MongoPayment;
 import lombok.NoArgsConstructor;
 
 import java.util.Optional;
@@ -10,12 +10,12 @@ import java.util.Optional;
 public final class DummyMongoPaymentsRepository implements PaymentsRepository {
 
     @Override
-    public Payment save(final Payment payment) {
+    public MongoPayment save(final MongoPayment mongoPayment) {
         throw new RuntimeException("Error");
     }
 
     @Override
-    public Optional<Payment> findById(final String id) {
+    public Optional<MongoPayment> findById(final String id) {
         throw new RuntimeException("Error");
     }
 }

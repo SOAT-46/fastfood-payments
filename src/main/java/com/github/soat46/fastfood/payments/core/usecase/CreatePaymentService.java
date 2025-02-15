@@ -2,6 +2,9 @@ package com.github.soat46.fastfood.payments.core.usecase;
 
 import com.github.soat46.fastfood.payments.adapters.gateways.interfaces.CreatePaymentPort;
 import com.github.soat46.fastfood.payments.adapters.gateways.interfaces.MercadoPagoIntegrationPort;
+import com.github.soat46.fastfood.payments.adapters.repositories.MongoPaymentsRepository;
+import com.github.soat46.fastfood.payments.adapters.repositories.contracts.PaymentsRepository;
+import com.github.soat46.fastfood.payments.adapters.repositories.models.MongoPayment;
 import com.github.soat46.fastfood.payments.controller.dto.WebhookDto;
 import com.github.soat46.fastfood.payments.controller.factory.PaymentClientFactory;
 import com.github.soat46.fastfood.payments.core.entities.payment.FastfoodPayment;
@@ -22,18 +25,15 @@ public class CreatePaymentService implements CreatePaymentUseCase {
 
     private final MercadoPagoIntegrationPort mercadoPagoPort;
     private final CreatePaymentPort createPayment;
-    private final PaymentClient client;
-    private final PaymentRepository repository;
-
-    public PaymentServiceImpl(PaymentClientFactory clientFactory, PaymentRepository repository){
-        this.repository = repository;
-        this.client = clientFactory;
-    }
+    private final PaymentClient paymentClient;
+    private final MongoPaymentsRepository paymentsRepository;
 
     public CreatePaymentService(
-        final MercadoPagoIntegrationPort mercadoPort, final CreatePaymentPort paymentPort) {
+        final MercadoPagoIntegrationPort mercadoPort, final CreatePaymentPort paymentPort, PaymentClient client, MongoPaymentsRepository repository) {
         mercadoPagoPort = mercadoPort;
         createPayment = paymentPort;
+        paymentClient = client;
+        paymentsRepository = repository;
     }
 
     @Override
@@ -45,10 +45,10 @@ public class CreatePaymentService implements CreatePaymentUseCase {
         return Optional.empty();
     }
 
-    public boolean webhookHandle(WebhookDto webhookDto) throws MPException, MPApiException {
+    public boolean webhook(WebhookDto webhookDto) throws MPException, MPApiException {
         if(webhookDto.getAction().equals("payment.updated")){
-            Payment payment = client.get(webhookDto.getData().getId());
-            repository.save(payment);
+            Payment payment = paymentClient.get(webhookDto.getData().getId());
+            paymentsRepository.save(payment);
             return true;
         }
 
