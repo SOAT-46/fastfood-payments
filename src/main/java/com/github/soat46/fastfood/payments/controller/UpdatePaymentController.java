@@ -5,17 +5,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.soat46.fastfood.payments.core.entities.payment.FastfoodPayment;
 import com.github.soat46.fastfood.payments.core.entities.payment.PaymentNotification;
 import com.github.soat46.fastfood.payments.core.usecase.UpdatePaymentService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
 @RequestMapping("/payments/webhook")
-public class UpdatePaymentController {
+@Tag(name = "payments", description = "Payments")
+public final class UpdatePaymentController {
 
   private final ObjectMapper mapper = new ObjectMapper();
   private final UpdatePaymentService useCase;
@@ -24,7 +24,8 @@ public class UpdatePaymentController {
     useCase = paymentService;
   }
 
-  @PostMapping
+  @PatchMapping
+  @Operation(summary = "Update the payment", description = "Update the payment")
   public ResponseEntity<FastfoodPayment> post(final @RequestBody PaymentNotification notification)
       throws JsonProcessingException {
     final var not = mapper.writeValueAsString(notification);

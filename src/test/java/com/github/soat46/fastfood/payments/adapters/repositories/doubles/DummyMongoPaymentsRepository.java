@@ -10,7 +10,7 @@ import java.util.Optional;
 public final class DummyMongoPaymentsRepository implements PaymentsRepository {
 
     @Override
-    public MongoPayment save(final MongoPayment mongoPayment) {
+    public MongoPayment create(final MongoPayment mongoPayment) {
         throw new RuntimeException("Error");
     }
 

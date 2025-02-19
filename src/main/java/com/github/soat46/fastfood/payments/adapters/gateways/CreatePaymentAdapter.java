@@ -20,7 +20,7 @@ public class CreatePaymentAdapter implements CreatePaymentPort {
   public Optional<FastfoodPayment> create(final FastfoodPayment fastfoodPayment) {
         try {
             final var dbEntity = MongoPayment.from(fastfoodPayment);
-            final var payment = repository.save(dbEntity);
+            final var payment = repository.create(dbEntity);
             return Optional.of(payment.toDomain());
         } catch (Exception e) {
             return Optional.empty();

@@ -1,11 +1,11 @@
 package com.github.soat46.fastfood.payments.adapters.repositories.models;
 
 import com.github.soat46.fastfood.payments.core.entities.payment.FastfoodPayment;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Builder
