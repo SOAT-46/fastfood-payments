@@ -6,6 +6,6 @@ import java.util.Optional;
 
 public interface PaymentsRepository {
 
-    MongoPayment save(MongoPayment mongoPayment);
+    MongoPayment create(MongoPayment payment);
     Optional<MongoPayment> findById(String id);
 }

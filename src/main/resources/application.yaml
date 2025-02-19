@@ -3,7 +3,8 @@ spring:
         name: microservice_mercadopago
     data:
       mongodb:
-          uri: ${SPRING_DATA_MONGODB_URI:mongodb://root:password@localhost:27017/fastfood?authSource=admin}
+          uri: ${SPRING_DATA_MONGODB_URI:mongodb://user:pass@localhost:27017}
+          database: fastfood
 
 integration:
   mercadopago:

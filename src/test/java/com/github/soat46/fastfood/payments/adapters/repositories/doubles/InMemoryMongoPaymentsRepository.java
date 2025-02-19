@@ -10,7 +10,7 @@ import java.util.Optional;
 public final class InMemoryMongoPaymentsRepository implements PaymentsRepository {
 
     @Override
-    public MongoPayment save(final MongoPayment mongoPayment) {
+    public MongoPayment create(final MongoPayment mongoPayment) {
         return mongoPayment;
     }
 

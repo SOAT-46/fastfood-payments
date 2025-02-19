@@ -6,6 +6,8 @@ import com.github.soat46.fastfood.payments.core.entities.payment.PaymentNotifica
 import com.github.soat46.fastfood.payments.core.usecase.interfaces.CreatePaymentUseCase;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +20,8 @@ import java.net.URI;
 @Slf4j
 @RestController
 @RequestMapping("/payments")
-public class CreatePaymentController {
+@Tag(name = "payments", description = "Payments")
+public final class CreatePaymentController {
     private final CreatePaymentUseCase useCase;
 
     public CreatePaymentController(final CreatePaymentUseCase paymentUseCase) {
@@ -26,6 +29,7 @@ public class CreatePaymentController {
   }
 
     @PostMapping
+    @Operation(summary = "Create a new payment", description = "Create a new payment")
     public ResponseEntity<FastfoodPayment> post(final @RequestBody PaymentNotification notification) {
         final var created = useCase.create(notification);
         if (created.isPresent()) {
@@ -36,10 +40,10 @@ public class CreatePaymentController {
         return ResponseEntity.badRequest().build();
     }
 
-    @PostMapping
+    @PostMapping("/webhook")
+    @Operation(summary = "Mercado Pago webhook", description = "Mercado Pago webhook")
     public ResponseEntity<String> webhook(@RequestBody WebhookDto webhookVo) throws MPException, MPApiException{
         this.useCase.webhook(webhookVo);
-
         return ResponseEntity.ok("Received webhook");
     }
 }

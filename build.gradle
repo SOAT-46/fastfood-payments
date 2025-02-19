@@ -64,8 +64,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
 
-    implementation 'org.hibernate.orm:hibernate-core'
-    implementation 'org.liquibase:liquibase-core'
+    // Swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
 
     // Lombok
     compileOnly 'org.projectlombok:lombok:1.18.34'
@@ -88,6 +88,8 @@ dependencies {
     compileOnly 'com.google.guava:guava:32.0.1-jre'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation "org.testcontainers:testcontainers:1.20.4"
+    testImplementation 'org.testcontainers:mongodb:1.19.3'
 
     pmd 'net.sourceforge.pmd:pmd-ant:7.4.0'
     pmd 'net.sourceforge.pmd:pmd-java:7.4.0'

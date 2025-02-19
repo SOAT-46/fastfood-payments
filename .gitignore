@@ -19,6 +19,9 @@ target/
 *.iws
 *.iml
 *.ipr
+gradle/
+gradlew
+gradlew.bat
 
 ### NetBeans ###
 /nbproject/private/

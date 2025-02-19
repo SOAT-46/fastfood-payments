@@ -1,7 +1,7 @@
 services:
-    mongodb:
-        image: 'mongo:latest'
-        container_name: mongodb
+    fastfood_payments_database:
+        image: 'mongodb/mongodb-community-server:7.0.14-ubi8'
+        container_name: fastfood_payments_database
         environment:
             MONGO_INITDB_DATABASE: 'fastfood'
             MONGO_INITDB_ROOT_USERNAME: 'root'
@@ -22,11 +22,11 @@ services:
         build:
             context: ../
         environment:
-            SPRING_DATA_MONGODB_URI: mongodb://root:password@mongodb:27017/fastfood?authSource=admin
+            SPRING_DATA_MONGODB_URI: mongodb://user:pass@localhost:27017/fastfood
         ports:
             - "8081:8080"
         depends_on:
-            mongodb:
+            fastfood_payments_database:
                 condition: service_healthy
         networks:
             - app-network
